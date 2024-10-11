@@ -2,7 +2,7 @@
 
 Greetings👋
 
-This weather app was developed as part of my final project in the SheCodes bootcamp. It provides real-time weather data for any location, featuring current temperature, humidity, and weather conditions. The app integrates with the OpenWeatherMap API to fetch and display accurate weather information 👩‍💻😊
+This weather app was developed as part of my final project in the SheCodes bootcamp. It provides real-time weather data for any location, featuring current temperature, humidity, and weather conditions. The app integrates with the <a href="https://openweathermap.org/">OpenWeatherMap API</a> to fetch and display accurate weather information 👩‍💻😊
 
 ## Languages & tools
 
