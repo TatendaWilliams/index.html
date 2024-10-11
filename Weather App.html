@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Weather App</title>
+   <link rel="stylesheet" href="style.css">
+   <style>
+    body {
+   background-color: #c7d4e7;
+   font-family: Arial, sans-serif;
+}
+
+h1 {
+   text-align: center;
+   font-size: 4rem;
+   margin-top: 2rem;
+}
+
+form {
+   margin-top: 2rem;
+   text-align: center;
+}
+
+input[type="text"] {
+   padding: 0.5rem;
+   font-size: 1rem;
+}
+
+button {
+   padding: 0.5rem;
+   font-size: 1rem;
+   background-color: #4CAF50;
+   color: #fff;
+   border: none;
+}
+
+#weather {
+   margin-top: 2rem;
+   text-align: center;
+   font-size: 2rem;
+}
+   </style>
+</head>
+<body>
+   <h1>Weather App</h1>
+   <form>
+      <input type="text" id="location" placeholder="Enter location">
+      <button type="button" onclick="getWeather()">Get Weather</button>
+   </form>
+   <div id="weather"></div>
+   <script>
+    function getWeather() {
+   const location = document.getElementById("location").value;
+   const apiKey = "46c8d49b79ef7218597eea96e702635a";
+   const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
+
+   fetch(url)
+      .then(response => response.json())
+      .then(data => {
+         const { temp, feels_like } = data.main;
+         const description = data.weather[0].description;
+         const cityName = data.name;
+         const country = data.sys.country;
+
+         const weatherDisplay = `Current weather in ${cityName}, ${country}: ${description}, ${temp}°C (feels like ${feels_like}°C)`;
+
+         document.getElementById("weather").textContent = weatherDisplay;
+      })
+      .catch(error => console.log(error));
+}
+   </script>
+</body>
+</html>
