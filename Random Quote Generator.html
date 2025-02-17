@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator</title>
+</head>
+<body>
+<style>
+body       {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  margins: 0;
+  paddings: 0;
+  background-size: 300% 300%;
+  background: linear-gradient(135deg, ff9a9e, #fad0c4, #fbc2eb);
+  animation: gradientBackground 8s ease infinite;
+  color: #335;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  text-align: center;
+}
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 60%;
+  }
+  60% {
+    background-position: 100% 60%;
+  }
+  100% {
+    background-position: 0% 60%;
+  }
+}
+
+#app {
+  width: 90%;
+  background: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+  font-size: 2.8rem;
+  color: #d64550;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#quote-container {
+  margin: 20px 0;
+  background: #fff4e6;
+  padding: 20px;
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#quote {
+  font-size: 1rem;
+  color: #ff5722;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #66bb6a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin: 5px;
+  font-size: 1.5rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+#saved-quotes {
+  margin-top: 20px;
+  text-align: left;
+}
+
+#saved-quotes h2 {
+  font-size: 2rem;
+  color: #2196f3;
+}
+
+#saved quotes-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+#saved-quotes-list li {
+  background: #e3f2fd;
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #64b5f6;
+  border-radius: 5px;
+  color: #1976d2;
+}
+</style>
+
+   <div>
+  <header>
+    <h1>Random Quote Generator</h1>
+  </header>
+  <main id="quote-container">
+    <p id="quote">"Welcome! Click the button below to get inspired."</p>
+    <button id="new-quote">New Quote</button>
+    <button id="save-quote">Save Quote</button>
+    <button id="share-twitter">Share on Twitter</button>
+  </main>
+  <section id="saved-quote">
+    <h2>Saved Quotes</h2>
+    <ul id="saved-quotes-list"></ul>
+  </section>
+  <footer>
+    <p>Made with ❤️ by Tatenda Williams</p>
+  </footer>
+</div> 
+<script>
+// Fetch and display a random quote
+function fetchRandomQuote() {
+  fetch("https://thequoteshub.com/api/random")
+    .then((response) => response.json())
+    .then((data) => {
+      // Adjust these keys to match the API response structure
+      const quote = data.text || data.content || "No quote found.";
+      const author = data.author || "unkown";
+
+      if (quote) {
+        document.getElementById("quote").textContent = `"${quote}" - ${author}`;
+      } else {
+        document.getElementById("quote").textContent =
+          "Oops! Couldn't fetch a valid quote. Please try again.";
+      }
+
+      changeTheme(); // Change background color dynamically
+    })
+    .catch((error) => {
+      console.error("Error fetching quote:", error);
+      document.getElementById("quote").textContent =
+        "Oops! Couldn't fetch a quote. Please try again.";
+    });
+}
+
+// Change background theme dynamically
+function changeTheme() {
+  const colors = [
+    "#ff9a9e",
+    "#fad0c4",
+    "#fbc2eb",
+    "#a18cd1",
+    "#f6d365",
+    "#fda085"
+  ];
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  document.body.style.background = randomColor;
+}
+
+// Save quote to local storage
+function saveQuote() {
+  const currentQuote = document.getElementById("quote").textContent;
+  if (
+    currentQuote !== "Welcome! Click the button below to get inspired." &&
+    currentQuote !== "Oops! Couldn't fetch a quote. Please try again."
+  ) {
+    let savedQuotes = JSON.parse(localStorage.getItem("savedQuotes")) || [];
+    if (!savedQuotes.includes(currentQuote)) {
+      savedQuotes.push(currentQuote);
+      localStorage.setItem("savedQuotes", JSON.stringify(savedQuotes));
+      displaySavedQuotes(); // Update the UI
+    }
+  }
+}
+
+// Display saved quotes from local storage
+function displaySavedQuotes() {
+  const savedQuotes = JSON.parse(localStorage.getItem("savedQuotes")) || [];
+  const savedQuotesList = document.getElementById("saved-quotes-list");
+  savedQuotesList.innerHTML = "";
+  savedQuotes.forEach((quote) => {
+    const li = document.createElement("li");
+    li.textContent = quote;
+    savedQuotesList.appendChild(li);
+  });
+}
+
+// Function to share a quote on Twitter
+function shareOnTwitter() {
+  const quote = document.getElementById("quote").textContent;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    quote
+  )}`;
+  window.open(twitterUrl, "_blank");
+}
+
+// Event listeners for buttons
+document
+  .getElementById("new-quote")
+  .addEventListener("click", fetchRandomQuote);
+document.getElementById("save-quote").addEventListener("click", saveQuote);
+document
+  .getElementById("share-twitter")
+  .addEventListener("click", shareOnTwitter);
+
+// Load initial quote and saved quotes on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const initialQuote = "Welcome! Click the button below to get inspired.";
+  document.getElementById("quote").textContent = initialQuote;
+  displaySavedQuotes();
+});
+</script>
+</body>
+</html>
